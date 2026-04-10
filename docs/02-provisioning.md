@@ -5,7 +5,7 @@ A new or factory-reset frogLink must be provisioned before it can send and recei
 ## Prerequisites
 
 - A frogblue project with at least one configured device (e.g., a frogDim, frogRelay, frogMultiSense, etc.)
-- The frogblue ProjectApp installed on a mobile device
+- The frogblue ProjectApp installed on an iPad or Android tablet.
 - The frogLink USB plugged into a computer (it uses Bluetooth to communicate with the ProjectApp during configuration)
 
 ## Step 1: Update Firmware
