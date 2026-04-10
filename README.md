@@ -13,9 +13,20 @@
 
 ---
 
+<table>
+<tr>
+<td width="140" align="center">
+<img src="assets/froglink-device.png" alt="frogLink USB" width="120">
+</td>
+<td>
+
 Python and C interfaces for the **frogblue frogLink USB** gateway — a serial USB-to-Bluetooth bridge for the frogblue smart home system.
 
 The frogLink USB stick allows any computer to send and receive commands to frogblue devices (lights, shutters, sensors, heating) over the frogblue BLE mesh network using simple ASCII commands via a serial connection.
+
+</td>
+</tr>
+</table>
 
 ## Features
 
