@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+*.o
+src/c/examples/detect
+src/c/examples/listen
+src/c/examples/interactive
+.claude/
