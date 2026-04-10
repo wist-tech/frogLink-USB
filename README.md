@@ -1,4 +1,17 @@
-# frogLink-USB
+<p align="center">
+  <img src="assets/banner.svg" alt="frogLink-USB" width="900">
+</p>
+
+<p align="center">
+  <a href="https://www.frogblue.com"><img src="assets/logo-frogblue.svg" alt="frogblue" height="30"></a>
+  &nbsp;&nbsp;
+  <img src="https://img.shields.io/badge/python-3.8+-91d023?style=flat-square&logo=python&logoColor=white" alt="Python 3.8+">
+  <img src="https://img.shields.io/badge/C-POSIX-91d023?style=flat-square&logo=c&logoColor=white" alt="C POSIX">
+  <img src="https://img.shields.io/badge/API-2.0-91d023?style=flat-square" alt="API 2.0">
+  <img src="https://img.shields.io/badge/license-MIT-91d023?style=flat-square" alt="MIT License">
+</p>
+
+---
 
 Python and C interfaces for the **frogblue frogLink USB** gateway — a serial USB-to-Bluetooth bridge for the frogblue smart home system.
 
