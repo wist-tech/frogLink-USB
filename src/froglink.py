@@ -5,6 +5,7 @@ Communicates with frogblue devices via serial JSON commands.
 """
 
 import json
+import platform
 import threading
 import time
 import glob
@@ -12,6 +13,7 @@ import subprocess
 from typing import Optional
 
 import serial
+import serial.tools.list_ports
 
 
 class FrogLinkError(Exception):
@@ -56,31 +58,62 @@ class FrogLink:
     def detect() -> Optional[str]:
         """Auto-detect a frogLink USB device.
 
-        Checks /dev/serial/by-id/ for frogblue devices (Linux),
-        falls back to /dev/ttyUSB* and /dev/tty.usbserial-* patterns.
+        Uses platform-specific detection:
+        - Linux: /dev/serial/by-id/ symlinks, then udev on /dev/ttyUSB*
+        - macOS: /dev/tty.usbserial-* with pyserial port info
+        - Windows: serial.tools.list_ports (checks manufacturer/product)
 
-        Returns the port path, or None if not found.
+        Returns the port path (e.g., "/dev/ttyUSB0", "COM3"), or None.
         """
-        # Linux: check by-id symlinks (most reliable)
-        by_id = glob.glob("/dev/serial/by-id/*frogblue*FrogLink*")
-        if by_id:
-            return by_id[0]
+        system = platform.system()
 
-        # Linux: check udev info on ttyUSB devices
-        for path in sorted(glob.glob("/dev/ttyUSB*")):
-            try:
-                result = subprocess.run(
-                    ["udevadm", "info", "--query=property", "--name", path],
-                    capture_output=True, text=True, timeout=5,
-                )
-                if "FrogLink" in result.stdout:
-                    return path
-            except (subprocess.TimeoutExpired, FileNotFoundError):
-                continue
+        if system == "Linux":
+            # Check by-id symlinks (most reliable)
+            by_id = glob.glob("/dev/serial/by-id/*frogblue*FrogLink*")
+            if by_id:
+                return by_id[0]
 
-        # macOS
-        for path in sorted(glob.glob("/dev/tty.usbserial-*")):
-            return path  # best guess on macOS
+            # Fall back to udev info on ttyUSB devices
+            for path in sorted(glob.glob("/dev/ttyUSB*")):
+                try:
+                    result = subprocess.run(
+                        ["udevadm", "info", "--query=property", "--name", path],
+                        capture_output=True, text=True, timeout=5,
+                    )
+                    if "FrogLink" in result.stdout:
+                        return path
+                except (subprocess.TimeoutExpired, FileNotFoundError):
+                    continue
+
+        elif system == "Darwin":  # macOS
+            for port_info in serial.tools.list_ports.comports():
+                desc = (port_info.description or "").lower()
+                mfg = (port_info.manufacturer or "").lower()
+                if "frogblue" in mfg or "froglink" in desc:
+                    return port_info.device
+            # Fall back to FTDI serial pattern
+            for path in sorted(glob.glob("/dev/tty.usbserial-*")):
+                return path
+
+        elif system == "Windows":
+            for port_info in serial.tools.list_ports.comports():
+                desc = (port_info.description or "").lower()
+                mfg = (port_info.manufacturer or "").lower()
+                product = (port_info.product or "").lower()
+                if any("frogblue" in s or "froglink" in s
+                       for s in (desc, mfg, product)):
+                    return port_info.device
+            # Fall back: check for FTDI devices (frogLink uses FT232)
+            for port_info in serial.tools.list_ports.comports():
+                if port_info.vid == 0x0403 and port_info.pid == 0x6001:
+                    return port_info.device
+
+        # Generic fallback for any platform
+        for port_info in serial.tools.list_ports.comports():
+            desc = (port_info.description or "").lower()
+            mfg = (port_info.manufacturer or "").lower()
+            if "frogblue" in mfg or "froglink" in desc:
+                return port_info.device
 
         return None
 

@@ -1,5 +1,7 @@
 # Getting Started with frogLink USB
 
+For tested versions and platform support details, see [Version Info](00-version-info.md).
+
 ## What is frogLink?
 
 The frogLink USB is a serial USB-to-Bluetooth gateway by frogblue AG. It bridges a host computer to frogblue's BLE mesh network, allowing you to send and receive commands to frogblue devices (lights, shutters, sensors, heating) from any system with a USB port.
